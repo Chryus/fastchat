@@ -1,4 +1,4 @@
-# Welcome to Remix!
+# Welcome to FastChat, a realtime chat App with Remix and Supabase!
 
 - [Remix Docs](https://remix.run/docs)
 
