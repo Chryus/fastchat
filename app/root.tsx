@@ -8,9 +8,10 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useRevalidator,
 } from "@remix-run/react";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import createServerSupabase from "utils/supabase.server";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 
@@ -42,11 +43,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  const { env } = useLoaderData<typeof loader>();
+  const { env, session } = useLoaderData<typeof loader>();
+  const revalidator = useRevalidator();
 
   const [supabase] = useState(() =>
     createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
+
+  const serverAccessToken = session?.access_token;
+
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.access_token !== serverAccessToken) {
+        revalidator.revalidate();
+      }
+    });
+  }, [supabase, serverAccessToken, revalidator]);
 
   return (
     <html lang="en">
