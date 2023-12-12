@@ -53,11 +53,16 @@ export default function App() {
   const serverAccessToken = session?.access_token;
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.access_token !== serverAccessToken) {
         revalidator.revalidate();
       }
     });
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [supabase, serverAccessToken, revalidator]);
 
   return (
