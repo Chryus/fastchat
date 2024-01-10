@@ -1,5 +1,7 @@
 import { useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import { MessageList, Message } from "@chatscope/chat-ui-kit-react";
+import * as styles from "./realtime-messages.css";
 
 import type { SupabaseOutletContext } from "~/root";
 import type { Database } from "db_types";
@@ -12,8 +14,7 @@ export default function RealtimeMessages({
   serverMessages: Message[];
 }) {
   const [messages, setMessages] = useState(serverMessages);
-  const { supabase } = useOutletContext<SupabaseOutletContext>();
-
+  const { supabase, userName } = useOutletContext<SupabaseOutletContext>();
   useEffect(() => {
     setMessages(serverMessages);
   }, [serverMessages]);
@@ -39,5 +40,26 @@ export default function RealtimeMessages({
     };
   }, [supabase, messages, setMessages]);
 
-  return <pre>{JSON.stringify(messages, null, 2)}</pre>;
+  return (
+    <>
+      <div className={styles.root}>
+        <MessageList>
+          {messages.map((message) => {
+            return (
+              <Message
+                key={message.id}
+                model={{
+                  message: message.content,
+                  sentTime: "just now",
+                  sender: userName,
+                  direction: "incoming",
+                  position: "single",
+                }}
+              />
+            );
+          })}
+        </MessageList>
+      </div>
+    </>
+  );
 }
