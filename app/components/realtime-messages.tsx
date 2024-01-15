@@ -1,6 +1,6 @@
 import { useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { MessageList, Message } from "@chatscope/chat-ui-kit-react";
+import { MessageList, Message, Avatar } from "@chatscope/chat-ui-kit-react";
 import * as styles from "./realtime-messages.css";
 
 import type { SupabaseOutletContext } from "~/root";
@@ -14,7 +14,9 @@ export default function RealtimeMessages({
   serverMessages: Message[];
 }) {
   const [messages, setMessages] = useState(serverMessages);
-  const { supabase, userName } = useOutletContext<SupabaseOutletContext>();
+  const { supabase, userName, avatarIco } =
+    useOutletContext<SupabaseOutletContext>();
+
   useEffect(() => {
     setMessages(serverMessages);
   }, [serverMessages]);
@@ -43,7 +45,7 @@ export default function RealtimeMessages({
   return (
     <>
       <div className={styles.root}>
-        <MessageList>
+        <MessageList className={styles.messageList}>
           {messages.map((message) => {
             return (
               <Message
@@ -55,7 +57,10 @@ export default function RealtimeMessages({
                   direction: "incoming",
                   position: "single",
                 }}
-              />
+              >
+                {" "}
+                <Avatar src={avatarIco} name="Joe" />
+              </Message>
             );
           })}
         </MessageList>

@@ -16,6 +16,11 @@ import createServerSupabase from "utils/supabase.server";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import chatStyles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import nextuiStyles from "~/tailwind.css";
+import * as styles from "./root.css";
+import akane from "./assets/icons/akane.svg";
+import eliot from "./assets/icons/eliot.svg";
+import joe from "./assets/icons/joe.svg";
+import zoe from "./assets/icons/zoe.svg";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
@@ -25,7 +30,10 @@ type TypedSupabaseClient = SupabaseClient<Database>;
 export type SupabaseOutletContext = {
   supabase: TypedSupabaseClient;
   userName: string;
+  avatarIco: string;
 };
+
+const icoArray = [akane, eliot, joe, zoe];
 
 export const links: LinksFunction = () => {
   // `links` returns an array of objects whose
@@ -69,6 +77,9 @@ export default function App() {
     createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
   const [userName] = useState(() => session?.user.user_metadata.user_name);
+  const [avatarIco] = useState(
+    () => icoArray[Math.floor(Math.random() * icoArray.length)]
+  );
 
   const serverAccessToken = session?.access_token;
 
@@ -88,7 +99,7 @@ export default function App() {
   }, [supabase, serverAccessToken, revalidator]);
 
   return (
-    <html lang="en">
+    <html className={styles.root} lang="en">
       <head>
         <Meta />
         <Links />
@@ -96,7 +107,7 @@ export default function App() {
       <body>
         <NextUIProvider>
           <main className="mytheme text-foreground bg-background">
-            <Outlet context={{ supabase, userName }} />
+            <Outlet context={{ supabase, userName, avatarIco }} />
             <ScrollRestoration />
             <Scripts />
             <LiveReload />

@@ -8,6 +8,7 @@ import {
 import { Button } from "@nextui-org/react";
 import { useOutletContext } from "@remix-run/react";
 import { SupabaseOutletContext } from "~/root";
+import * as styles from "./login.css";
 
 export default function Login() {
   const { supabase } = useOutletContext<SupabaseOutletContext>();
@@ -32,7 +33,7 @@ export default function Login() {
     <>
       <Navbar shouldHideOnScroll>
         <NavbarBrand>
-          <p className="font-bold text-inherit">FastChat</p>
+          <p className={styles.NavBrand}>FastChat</p>
         </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
           <NavbarItem>
