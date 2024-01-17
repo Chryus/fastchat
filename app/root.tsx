@@ -17,23 +17,16 @@ import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import chatStyles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import nextuiStyles from "~/tailwind.css";
 import * as styles from "./root.css";
-import akane from "./assets/icons/akane.svg";
-import eliot from "./assets/icons/eliot.svg";
-import joe from "./assets/icons/joe.svg";
-import zoe from "./assets/icons/zoe.svg";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
 type TypedSupabaseClient = SupabaseClient<Database>;
 
 export type SupabaseOutletContext = {
   supabase: TypedSupabaseClient;
-  userName: string;
-  avatarIco: string;
+  user: User | null;
 };
-
-const icoArray = [akane, eliot, joe, zoe];
 
 export const links: LinksFunction = () => {
   // `links` returns an array of objects whose
@@ -76,20 +69,19 @@ export default function App() {
   const [supabase] = useState(() =>
     createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
-  const [userName] = useState(() => session?.user.user_metadata.user_name);
-  const [avatarIco] = useState(
-    () => icoArray[Math.floor(Math.random() * icoArray.length)]
-  );
+
+  const [user, setUser] = useState<User | null>(() => session?.user || null);
 
   const serverAccessToken = session?.access_token;
 
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.access_token !== serverAccessToken) {
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (newSession?.access_token !== serverAccessToken) {
         // call loaders
         revalidator.revalidate();
+        setUser(newSession?.user || null);
       }
     });
 
@@ -107,7 +99,7 @@ export default function App() {
       <body>
         <NextUIProvider>
           <main className="mytheme text-foreground bg-background">
-            <Outlet context={{ supabase, userName, avatarIco }} />
+            <Outlet context={{ supabase, user }} />
             <ScrollRestoration />
             <Scripts />
             <LiveReload />
