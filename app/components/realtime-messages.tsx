@@ -52,14 +52,14 @@ export default function RealtimeMessages({
             model={{
               message: message.content,
               sentTime: "just now",
-              sender: user.user_metadata.name,
+              sender: user?.user_metadata.name,
               direction: "incoming",
               position: "single",
             }}
           >
             <Avatar
-              src={user.user_metadata.avatar_url}
-              name={user.user_metadata.name}
+              src={user?.user_metadata.avatar_url}
+              name={user?.user_metadata.name}
             />
           </Message>
         ))}
