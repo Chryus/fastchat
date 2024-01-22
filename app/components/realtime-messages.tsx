@@ -44,7 +44,7 @@ export default function RealtimeMessages({
   }, [supabase, messages, setMessages]);
 
   return (
-    <div className={styles.root}>
+    <div>
       <MessageList className={styles.messageList}>
         {messages.map((message) => (
           <Message
