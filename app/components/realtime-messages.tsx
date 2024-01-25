@@ -17,6 +17,8 @@ export default function RealtimeMessages({
 }: RealtimeMessagesProps): JSX.Element {
   const [messages, setMessages] = useState<MessageType[]>(serverMessages);
   const { supabase, user } = useOutletContext<SupabaseOutletContext>();
+  const genericAvatarUrl =
+    "https://gravatar.com/avatar/74aec74c795ea76454c5c697c58d5389?s=400&d=robohash&r=x";
 
   useEffect(() => {
     setMessages(serverMessages);
@@ -58,7 +60,11 @@ export default function RealtimeMessages({
             }}
           >
             <Avatar
-              src={user?.user_metadata.avatar_url}
+              src={
+                user?.id === message.user_id
+                  ? user?.user_metadata.avatar_url
+                  : genericAvatarUrl
+              }
               name={user?.user_metadata.name}
             />
           </Message>
