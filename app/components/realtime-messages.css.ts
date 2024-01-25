@@ -7,4 +7,5 @@ export const root = style({
 
 export const messageList = style({
   minHeight: "250px",
+  paddingTop: ".5rem",
 });
